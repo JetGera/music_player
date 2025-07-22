@@ -1,0 +1,16 @@
+.control-button{
+    position: relative;
+    display: inline-block;
+}
+
+#prev-button, .play-button,  .next-button, .volume-up-button, .volume-down-button{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 90%;
+  height: 90%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}

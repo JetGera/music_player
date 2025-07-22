@@ -1,0 +1,6 @@
+/node_modules
+/Saved Music
+src/ui/icons/test_cover_1.jpg
+/backend/__pycache__
+/.idea
+backend/keys_name.py

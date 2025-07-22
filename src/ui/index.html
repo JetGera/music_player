@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="./bootstrap.min.css">
+    <link rel="stylesheet" href="./style.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MP3Player</title>
+</head>
+<body>
+<div class="main-container" id="background" style="background: rgb(30,30,30); height: 100vh">
+    <div class="top-container" style="height: 8vh;">           </div>
+
+    <div class="middle-container">
+        <img id="cover-art" style="object-fit: cover;width: 60vh; height: 60vh; display: block; margin-left: auto; margin-right: auto;" alt="Album Cover">
+    </div>
+
+    <div class="cover-control-gap" style="height: 2vh;"></div>
+    <div class="song-info" style="">
+        <h3 class="song-title" style="text-align: center; height: 4.3vh; font-size: 4vh" id="song-title">Song Title</h3>
+        <div class="song-artist-and-album" style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 1em">
+            <h5 class="song-artist" style="text-align: center; font-size: 2.7vh" id="song-artist">Song Artist</h5>
+            <h5 style="text-align: center; display: block; font-size: 2.7vh" id="album-hyphen"> - </h5>
+            <h5 class="song-album" style="text-align: center; display: block; font-size: 2.7vh" id="song-album">Song Album</h5>
+        </div>
+    </div>
+    <div class="cover-control-gap" style="height: 1.3vh;"></div>
+    <div class="song-info" style="display: block; margin: auto; width: 59vh;">
+        <div class="song-time-grid" style="display: grid; grid-template-columns: 7vh 45vh 0; margin: auto;">
+            <h5 id="song-current-time" style="font-size: 2.7vh">00:00</h5>
+            <input type="range" id="music-position" value="0" step="0.1" style = "height: 3vh; max-width: 40vh; min-width: 10%; width: 100%; margin: auto; display: block;"/>
+            <label for="music-position" class="music-position-label" style="display: none"></label>
+            <h5 id="song-length" style="font-size: 2.7vh">00:00</h5>
+        </div>
+    </div>
+
+    <div class="cover-control-gap" style="height: 2.5vh;"></div>
+
+
+    <div class="music-control-panel" style="text-align: center; display: flex; gap: 5vh; justify-content: center; align-items: center;">
+        <div class="control-button" style="">
+            <img src="./icons/next.png" style="rotate: 180deg; filter: invert(100%); height: 5vh" id="prev-img" alt="prev-img">
+            <button class="prev-button" id="prev-button"></button>
+        </div>
+        <div class="control-button" style="">
+            <img src="./icons/play.png" style="filter: invert(100%); height: 5vh" id="play-img" alt="play-img">
+            <button class="play-button" id="play-button"></button>
+        </div>
+        <div class="control-button" style="">
+            <img src="./icons/next.png" style="filter: invert(100%); height: 5vh" id="next-img" alt="next-img">
+            <button class="next-button" id="next-button"></button>
+        </div>
+
+
+        <div class="volume-control-panel" style="text-align: center; margin-left: 10vh; display: flex; gap: 5vh; justify-content: center; align-items: center;">
+            <input type="range" id="volume-slider" min="0" max="100" value="50" class="slider"/>
+            <label for="volume-slider" class="volume-label"></label>
+        </div>
+    </div>
+    <div class="cover-control-gap" style="height: 2vh;"></div>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -84,5 +84,13 @@
   "keywords": [],
   "author": "JettX",
   "license": "ISC",
-  "description": "JettX Player"
+  "description": "JettX Player",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JetGera/music_player.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JetGera/music_player/issues"
+  },
+  "homepage": "https://github.com/JetGera/music_player#readme"
 }

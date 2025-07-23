@@ -5,6 +5,8 @@ import pygame
 import threading
 import keyboard
 import time
+
+from mutagen.id3 import ID3NoHeaderError
 from mutagen.mp3 import EasyMP3
 from mutagen import File
 import random
@@ -86,17 +88,17 @@ class MP3Player:
         pygame.mixer.music.set_pos(self.trim_start_silence)
         self.is_playing = True
 
-        # try:
-        #     self.artist_name = str(self.song_metadata['artist'])[2:-2]
-        #     self.song_name = str(self.song_metadata['title'])[2:-2]
-        # except (ID3NoHeaderError, Exception) as e:
-        #     self.song_name= str(self.song_queue[self.queue_position]).split('\\')[-1].split('.mp3')[0]
-        #     if " - " in self.song_name or " -- " in self.song_name:
-        #         self.artist_name = self.song_name.split(' - ')[0]
-        #         self.song_name = self.song_name.split(' - ')[1].split('.mp3')[0]
-        #     else:
-        #         self.artist_name = "untitled"
-        #         self.song_name = str(self.song_queue[self.queue_position]).split('\\')[-1].split('.mp3')[0]
+        try:
+            self.artist_name = str(self.song_metadata['artist'])[2:-2]
+            self.song_name = str(self.song_metadata['title'])[2:-2]
+        except (ID3NoHeaderError, Exception) as e:
+            self.song_name= str(self.song_queue[self.queue_position]).split('\\')[-1].split('.mp3')[0]
+            if " - " in self.song_name or " -- " in self.song_name:
+                self.artist_name = self.song_name.split(' - ')[0]
+                self.song_name = self.song_name.split(' - ')[1].split('.mp3')[0]
+            else:
+                self.artist_name = "untitled"
+                self.song_name = str(self.song_queue[self.queue_position]).split('\\')[-1].split('.mp3')[0]
 
 
 

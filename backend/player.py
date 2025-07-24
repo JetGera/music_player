@@ -50,6 +50,11 @@ class MP3Player:
         self.queue_position = 0
         self.ms = 0
 
+    def set_position(self, position):
+        self.seconds = position
+        self.ms = 0
+        pygame.mixer.music.set_pos(position + self.trim_start_silence)
+
     def get_cover_art_base64(self):
         try:
             file = File(self.mp3file)
@@ -86,7 +91,6 @@ class MP3Player:
         if not self.is_playing:
             pygame.mixer.music.pause()
         pygame.mixer.music.set_pos(self.trim_start_silence)
-        self.is_playing = True
 
         try:
             self.artist_name = str(self.song_metadata['artist'])[2:-2]
@@ -115,24 +119,19 @@ class MP3Player:
 
 
     def prev_song(self):
+        self.seconds = 0
+        self.ms = 0
         if self.queue_position > 0:
             self.queue_position -= 1
-            self.play_music(fr"{self.song_queue[self.queue_position]}")
-            self.set_volume(self.volume)
-            self.seconds = 0
-            self.ms = 0
-            pygame.mixer.music.set_pos(self.trim_start_silence)
-        else:
-            self.play_music(fr"{self.song_queue[self.queue_position]}")
-            self.set_volume(self.volume)
-            self.seconds = 0
-            self.ms = 0
-            pygame.mixer.music.set_pos(self.trim_start_silence)
+        self.play_music(fr"{self.song_queue[self.queue_position]}")
+        self.set_volume(self.volume)
+        pygame.mixer.music.set_pos(self.trim_start_silence)
+
 
     def seconds_handler(self):
-        time.sleep(1)
-        self.seconds += 1
-        self.ms = 0
+        time.sleep(0.25)
+        self.seconds = 0
+        self.ms = self.refresh_rate/4
         while not pygame.mixer.music.get_busy():
             time.sleep(1/self.refresh_rate)
         while True:
@@ -143,7 +142,7 @@ class MP3Player:
             # print(f"file_length - {file_length}")
             if pygame.mixer.music.get_busy():
                 self.ms += 1
-                if self.ms == self.refresh_rate or not pygame.mixer.music.get_busy():
+                if self.ms == self.refresh_rate:
                     self.seconds += 1
                     self.ms = 0
                     # self.print_current_song()
@@ -154,11 +153,10 @@ class MP3Player:
                 if self.replay == "single":
                     self.seconds = 0
                     self.ms = 0
-                    pygame.mixer.music.set_pos(self.seconds)
+                    pygame.mixer.music.set_pos(self.seconds + self.trim_start_silence)
 
                 elif self.replay == "queue":
                     self.next_song()
-                    self.is_playing = True
 
 
                 elif self.replay == "none":
@@ -166,7 +164,7 @@ class MP3Player:
                     self.is_playing = False
                     self.seconds = 0
                     self.ms = 0
-                    pygame.mixer.music.set_pos(self.seconds)
+                    pygame.mixer.music.set_pos(self.seconds + self.trim_start_silence)
 
 
 
@@ -232,17 +230,12 @@ class MP3Player:
     def skip_backward(self):
         self.seconds = min(self.file_length, self.seconds)
         if pygame.mixer.music.get_busy():
-            pygame.mixer.music.set_pos(self.seconds)
+            pygame.mixer.music.set_pos(self.seconds + self.trim_start_silence)
 
     def skip_forward(self):
         self.seconds = max(0, self.seconds - self.seconds_skip)
         if pygame.mixer.music.get_busy():
-            pygame.mixer.music.set_pos(self.seconds)
-
-    def set_song_position(self, position):
-        self.seconds = max(0, min(self.file_length, position))
-        self.ms = 0
-        pygame.mixer.music.set_pos(self.seconds)
+            pygame.mixer.music.set_pos(self.seconds + self.trim_start_silence)
 
     def set_volume(self, volume):
         self.volume = volume

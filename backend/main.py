@@ -1,6 +1,7 @@
 import asyncio
 import time
 from math import floor
+from types import NoneType
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,10 +43,11 @@ async def play():
         }
 
 def format_song_length():
-    song_length = round(player.file_length - 0.2)
-    minutes = floor(song_length / 60)
-    seconds = song_length % 60
-    return {f"{minutes:02d}:{seconds:02d}"}
+    if player.file_length is not None:
+        song_length = round(player.file_length - 0.2)
+        minutes = floor(song_length / 60)
+        seconds = song_length % 60
+        return {f"{minutes:02d}:{seconds:02d}"}
 
 @app.get("/next")
 async def next():
@@ -79,6 +81,13 @@ async def set_volume(volume: float):
 async def volume_up():
     player.volume_up()
     return {"status": "volume set"}
+
+@app.get("/set_position")
+async def set_position(position: float):
+    player.seconds = round(position + player.trim_start_silence)
+    player.set_position(player.seconds)
+    player.ms = 0
+    return {"position": position}
 
 @app.get("/volume_down")
 async def volume_down():

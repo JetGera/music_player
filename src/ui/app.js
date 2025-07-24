@@ -5,7 +5,7 @@ let song_length = "00:00"
 let is_playing = false
 
 
-const UPDATE_INTERVAL = 50;
+const UPDATE_INTERVAL = 25;
 
 
 
@@ -17,7 +17,6 @@ const song_current_time_text = document.getElementById('song-current-time')
 const song_length_text = document.getElementById('song-length')
 
 const music_position = document.getElementById('music-position')
-music_position.step = "0.1";
 
 const play_button = document.getElementById('play-button');
 const next_button = document.getElementById('next-button');
@@ -50,25 +49,24 @@ function formatTime(seconds) {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-// Таймер для обновления позиции
 function startTimer() {
     if (timerId) clearInterval(timerId);
 
-    // Сохраняем время начала воспроизведения
     const startTime = Date.now() - currentTimeInSeconds * 1000;
 
     timerId = setInterval(() => {
-        if (is_playing && !isSeeking) {
-            // Рассчитываем текущее время с высокой точностью
+        // Don't update if user is seeking
+        if (isSeeking) return;
+
+        if (is_playing) {
             currentTimeInSeconds = (Date.now() - startTime) / 1000;
 
-            // Обновляем ползунок с дробным значением
-            music_position.value = currentTimeInSeconds.toFixed(1);
+            // Only update if the change is significant (>100ms)
+            if (Math.abs(currentTimeInSeconds - music_position.value) > 0.1) {
+                music_position.value = currentTimeInSeconds.toFixed(1);
+                song_current_time_text.textContent = formatTime(Math.floor(currentTimeInSeconds));
+            }
 
-            // Обновляем отображаемое время (целые секунды)
-            song_current_time_text.textContent = formatTime(Math.floor(currentTimeInSeconds));
-
-            // Проверка окончания трека
             if (currentTimeInSeconds >= timeToSeconds(song_length)) {
                 clearInterval(timerId);
                 timerId = null;
@@ -90,9 +88,11 @@ music_position.addEventListener('input', function() {
 });
 
 music_position.addEventListener('change', function() {
+    if (!isSeeking) return;
+
     isSeeking = false;
-    currentTimeInSeconds = parseFloat(this.value);
-    sendCommand(`set_position?position=${Math.floor(currentTimeInSeconds)}`);
+    const newPosition = parseFloat(this.value);
+    sendCommand(`set_position?position=${Math.floor(newPosition)}`);
 });
 
 
@@ -125,9 +125,20 @@ const sendCommand = async (endpoint) => {
                 song_length_text.textContent = song_length;
                 music_position.max = timeToSeconds(song_length);
             }
-
+            return;
         }
+        if (endpoint.includes('position')) {
+            stopTimer();
 
+            currentTimeInSeconds = data.position;
+            music_position.value = currentTimeInSeconds;
+            song_current_time_text.textContent = formatTime(Math.floor(currentTimeInSeconds));
+
+            if (is_playing) {
+                startTimer();
+            }
+            return;
+        }
         if (endpoint === "next" || endpoint === "prev") {
             stopTimer();
             currentTimeInSeconds = 0;
@@ -136,9 +147,11 @@ const sendCommand = async (endpoint) => {
             song_length = data.song_length[0]
             song_length_text.textContent = song_length;
             music_position.max = timeToSeconds(song_length);
+            return;
         }
         if ( endpoint.includes("set_volume")) {
             // console.log(endpoint.slice(11))
+            return;
         }
     } catch (error) {
         console.error("Ошибка:", error);

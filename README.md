@@ -2,7 +2,7 @@
 
 <h3>This repository contains outdated code that no longer aligns with the project's current technology stack or business strategy.
 
-The project has shifted to a new tech stack, and we're exploring commercialization, which means this version won't be actively maintained or updated.
+The project has shifted to a new tech stack, and exploring commercialization, which means this version won't be actively maintained or updated.
 
 Feel free to fork and use it as-is for your own projects!</h3>
 
